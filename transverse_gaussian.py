@@ -47,11 +47,11 @@ def get_u(u_vec,r0,rt,delta_r,delta_t,rho,sigma,g,y_modulus,h,rs,n):
             if n < 10000:
                 u_mnext = 0.00001*np.exp(-((m*delta_r+r0) - (rt-n*delta_r*10**-2))**2/(20000*delta_r))
             else:
-                u_mnext = ((delta_t/delta_r)**2*(u[m]-2*u[m]+u[m-1])+(delta_t**2/(delta_r*h))*((r0/(m*delta_r+r0))**2-(r0**2*(m*delta_r+r0)/rs**3))*(u[m]-u[m]))*(y_modulus*10**-3/rho)+2*u[m]-u_before[m]
+                u_mnext = ((delta_t/delta_r)**2*(u[m]-2*u[m]+u[m-1])+(delta_t**2/(delta_r*h))*((r0/(m*delta_r+r0))**2-(r0**2*(m*delta_r+r0)/rs**3))*(u[m]-u[m]))*(sigma*10**-3/rho)+2*u[m]-u_before[m]
         elif m == 1438:
-            u_mnext = ((delta_t/delta_r)**2*(u[m+1]-2*u[m]+u[m-1])+(delta_t**2/(delta_r*h))*((r0/(m*delta_r+r0))**2-(r0**2*(m*delta_r+r0)/rs**3))*(u[m+1]-u[m]))*(y_modulus*10**-3/rho)+2*u[m]-u_before[m]
+            u_mnext = ((delta_t/delta_r)**2*(u[m+1]-2*u[m]+u[m-1])+(delta_t**2/(delta_r*h))*((r0/(m*delta_r+r0))**2-(r0**2*(m*delta_r+r0)/rs**3))*(u[m+1]-u[m]))*(sigma*10**-3/rho)+2*u[m]-u_before[m]
         else:
-            u_mnext = ((delta_t/delta_r)**2*(u[m+1]-2*u[m]+u[m-1])+(delta_t**2/(delta_r*h))*((r0/(m*delta_r+r0))**2-(r0**2*(m*delta_r+r0)/rs**3))*(u[m+1]-u[m]))*(y_modulus*10**-3/rho)+2*u[m]-u_before[m]
+            u_mnext = ((delta_t/delta_r)**2*(u[m+1]-2*u[m]+u[m-1])+(delta_t**2/(delta_r*h))*((r0/(m*delta_r+r0))**2-(r0**2*(m*delta_r+r0)/rs**3))*(u[m+1]-u[m]))*(sigma*10**-3/rho)+2*u[m]-u_before[m]
 
         u_next.append(u_mnext)
 
@@ -100,18 +100,16 @@ def simulate_gaussian(r0,rt,rs,sigma,rho,g,y_modulus,delta_t,delta_r):
     return u_vec
 
 
-# u_vec = simulate_gaussian(6000, 150000, 42300, 300, 1300, 9.81, 950, 480, 100)
-
-u_vec = simulate_gaussian(6000, 150000, 42300, 7.9*10**-3, 39, 9.81, 310*10**-3, 480, 100)  # Nanoworld Cahracteristics
+u_vec = simulate_gaussian(6000, 150000, 42300, 300, 1300, 9.81, 950, 480, 100)
 
 # Source: https://jakevdp.github.io/blog/2012/08/18/matplotlib-animation-tutorial/
 
 # Setting Up the Plot
 fig = plt.figure()
 ax = plt.axes(xlim=(6000, 150000), ylim=(-2*10**-5, 2*10**-5))
-ax.set_ylabel('Longitudinal Displacement (km)')
+ax.set_ylabel('Transverse Displacement (km)')
 ax.set_xlabel('Radius Along Cable (km)')
-ax.set_title('Longitudinal Oscillations - Gaussian Seed')
+ax.set_title('Transverse Oscillations - Gaussian Seed')
 line, = ax.plot([], [], lw=2)
 
 
@@ -135,4 +133,4 @@ anim = animation.FuncAnimation(fig, animate, np.arange(1, 10000), init_func=init
 plt.show()
 
 # writer = animation.writers['ffmpeg'](fps=41000)
-anim.save('Longituninal_Gaussian_Nanoworld_1.mp4', fps=200, extra_args=['-vcodec', 'libx264'])
+anim.save('Transverse_Gaussian.mp4', fps=200, extra_args=['-vcodec', 'libx264'])

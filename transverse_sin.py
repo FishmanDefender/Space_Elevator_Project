@@ -21,8 +21,10 @@ def init_u(delta_r,rt,r0):
             u_n = 0
             u_nminus = 0
         else:
-            u_n = u0*np.exp((-((m*delta_r+r0) - (rt))**2)/(20000*delta_r))
-            u_nminus = u0*np.exp((-((m*delta_r+r0) - (rt+delta_r*10**-2))**2)/(20000*delta_r))
+            u_n = u0*np.sin((1/delta_r*1000000)*0)
+            u_nminus = u0*np.sin((1/delta_r*1000000)+delta_r*10**-2)
+            # u_n = u0*np.exp((-((m*delta_r+r0) - (rt))**2)/(20000*delta_r))
+            # u_nminus = u0*np.exp((-((m*delta_r+r0) - (rt+delta_r*10**-2))**2)/(20000*delta_r))
 
         loc_u.append(u_n)
         u_minus.append(u_nminus)
@@ -45,13 +47,14 @@ def get_u(u_vec,r0,rt,delta_r,delta_t,rho,sigma,g,y_modulus,h,rs,n):
             u_mnext = 0
         elif m == 1439:
             if n < 10000:
-                u_mnext = 0.00001*np.exp(-((m*delta_r+r0) - (rt-n*delta_r*10**-2))**2/(20000*delta_r))
+                u_mnext = 0.00001*np.sin((1/delta_r*1000000)+delta_r*10**-2*n)
+                # u_mnext = 0.00001*np.exp(-((m*delta_r+r0) - (rt-n*delta_r*10**-2))**2/(20000*delta_r))
             else:
-                u_mnext = ((delta_t/delta_r)**2*(u[m]-2*u[m]+u[m-1])+(delta_t**2/(delta_r*h))*((r0/(m*delta_r+r0))**2-(r0**2*(m*delta_r+r0)/rs**3))*(u[m]-u[m]))*(y_modulus*10**-3/rho)+2*u[m]-u_before[m]
+                u_mnext = ((delta_t/delta_r)**2*(u[m]-2*u[m]+u[m-1])+(delta_t**2/(delta_r*h))*((r0/(m*delta_r+r0))**2-(r0**2*(m*delta_r+r0)/rs**3))*(u[m]-u[m]))*(sigma*10**-3/rho)+2*u[m]-u_before[m]
         elif m == 1438:
-            u_mnext = ((delta_t/delta_r)**2*(u[m+1]-2*u[m]+u[m-1])+(delta_t**2/(delta_r*h))*((r0/(m*delta_r+r0))**2-(r0**2*(m*delta_r+r0)/rs**3))*(u[m+1]-u[m]))*(y_modulus*10**-3/rho)+2*u[m]-u_before[m]
+            u_mnext = ((delta_t/delta_r)**2*(u[m+1]-2*u[m]+u[m-1])+(delta_t**2/(delta_r*h))*((r0/(m*delta_r+r0))**2-(r0**2*(m*delta_r+r0)/rs**3))*(u[m+1]-u[m]))*(sigma*10**-3/rho)+2*u[m]-u_before[m]
         else:
-            u_mnext = ((delta_t/delta_r)**2*(u[m+1]-2*u[m]+u[m-1])+(delta_t**2/(delta_r*h))*((r0/(m*delta_r+r0))**2-(r0**2*(m*delta_r+r0)/rs**3))*(u[m+1]-u[m]))*(y_modulus*10**-3/rho)+2*u[m]-u_before[m]
+            u_mnext = ((delta_t/delta_r)**2*(u[m+1]-2*u[m]+u[m-1])+(delta_t**2/(delta_r*h))*((r0/(m*delta_r+r0))**2-(r0**2*(m*delta_r+r0)/rs**3))*(u[m+1]-u[m]))*(sigma*10**-3/rho)+2*u[m]-u_before[m]
 
         u_next.append(u_mnext)
 
@@ -100,18 +103,16 @@ def simulate_gaussian(r0,rt,rs,sigma,rho,g,y_modulus,delta_t,delta_r):
     return u_vec
 
 
-# u_vec = simulate_gaussian(6000, 150000, 42300, 300, 1300, 9.81, 950, 480, 100)
-
-u_vec = simulate_gaussian(6000, 150000, 42300, 7.9*10**-3, 39, 9.81, 310*10**-3, 480, 100)  # Nanoworld Cahracteristics
+u_vec = simulate_gaussian(6000, 150000, 42300, 300, 1300, 9.81, 950, 480, 100)
 
 # Source: https://jakevdp.github.io/blog/2012/08/18/matplotlib-animation-tutorial/
 
 # Setting Up the Plot
 fig = plt.figure()
 ax = plt.axes(xlim=(6000, 150000), ylim=(-2*10**-5, 2*10**-5))
-ax.set_ylabel('Longitudinal Displacement (km)')
+ax.set_ylabel('Transverse Displacement (km)')
 ax.set_xlabel('Radius Along Cable (km)')
-ax.set_title('Longitudinal Oscillations - Gaussian Seed')
+ax.set_title('Transverse Oscillations - Gaussian Seed')
 line, = ax.plot([], [], lw=2)
 
 
@@ -135,4 +136,4 @@ anim = animation.FuncAnimation(fig, animate, np.arange(1, 10000), init_func=init
 plt.show()
 
 # writer = animation.writers['ffmpeg'](fps=41000)
-anim.save('Longituninal_Gaussian_Nanoworld_1.mp4', fps=200, extra_args=['-vcodec', 'libx264'])
+# anim.save('Transverse_Gaussian.mp4', fps=200, extra_args=['-vcodec', 'libx264'])
